@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="dark">
+<html lang="zh-TW" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feature Adaptive 原始日線 (1D) 監控儀表盤 | 台指大盤量化系統</title>
+    <title>Feature Adaptive 原始日線 (1D) 監控中心 | 台指大盤量化系統</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
@@ -14,45 +14,73 @@
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#0b0f19',
-                        darkCard: '#111827',
-                        cardBorder: '#1f2937',
-                        cyanAccent: '#06b6d4',
-                        emeraldAccent: '#10b981',
-                        roseAccent: '#f43f5e',
-                        amberAccent: '#f59e0b'
+                        brandBlue: '#1e40af',
+                        brandCyan: '#0284c7',
+                        successGreen: '#059669',
+                        dangerRed: '#dc2626',
+                        warningAmber: '#d97706'
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #0b0f19; color: #e5e7eb; }
-        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .pulse-badge { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
+        :root {
+            font-size: 100%;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+            background-color: #f8fafc; 
+            color: #1e293b; 
+            transition: font-size 0.15s ease-in-out;
+        }
+        .white-card { 
+            background-color: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05); 
+        }
+        .pulse-badge { 
+            animation: pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite; 
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .75; } }
     </style>
 </head>
 <body class="min-h-screen pb-16">
 
-    <!-- Top Navigation -->
-    <header class="border-b border-gray-800 bg-gray-900/60 sticky top-0 z-50 backdrop-blur-md">
+    <!-- Top Navigation Header -->
+    <header class="border-b border-slate-200 bg-white/90 sticky top-0 z-50 backdrop-blur-md shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-cyan-500/20">
+                <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md shadow-blue-500/20">
                     FA
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                    <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 flex items-center gap-2">
                         Feature Adaptive 原始日線 (1D) 監控中心
-                        <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800">Production</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-semibold">Live Production</span>
                     </h1>
-                    <p class="text-xs text-gray-400">大盤微積分平穩長記憶・Yang-Zhang 無偏波動・狀態機即時決策</p>
+                    <p class="text-xs text-slate-500">大盤微積分平穩長記憶・Yang-Zhang 無偏波動・狀態機即時決策</p>
                 </div>
             </div>
-            <div class="text-right">
-                <div class="text-xs text-gray-400">最後運算更新</div>
-                <div class="text-sm font-semibold text-cyan-400" id="update-date">2026-09-11 收盤</div>
+            
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Font Zoom Toolbar -->
+                <div class="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
+                    <button onclick="changeFontSize(-5)" title="縮小字體" class="px-2 py-0.5 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-white rounded transition">
+                        A-
+                    </button>
+                    <button onclick="resetFontSize()" title="重置字體" class="px-1.5 py-0.5 text-xs font-medium text-slate-400 hover:text-slate-800 rounded transition">
+                        100%
+                    </button>
+                    <button onclick="changeFontSize(5)" title="放大字體" class="px-2 py-0.5 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-white rounded transition">
+                        A+
+                    </button>
+                </div>
+
+                <div class="text-right border-l border-slate-200 pl-3 sm:pl-4">
+                    <div class="text-xs text-slate-400">結算更新</div>
+                    <div class="text-xs sm:text-sm font-semibold text-blue-600" id="update-date">2026-09-11 收盤</div>
+                </div>
             </div>
         </div>
     </header>
@@ -60,97 +88,153 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
 
         <!-- Action Banner (Decision State) -->
-        <div class="glass-card rounded-2xl p-6 relative overflow-hidden shadow-2xl">
-            <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full blur-3xl pointer-events-none opacity-20" style="background-color: #10b981;"></div>
-            
+        <div class="white-card rounded-2xl p-6 relative overflow-hidden border-l-8" style="border-left-color: #059669;">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <div class="flex items-center gap-3">
-                        <span class="px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider pulse-badge" style="background-color: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981;">
+                        <span class="px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider pulse-badge" style="background-color: #ecfdf5; color: #059669; border: 1px solid #059669;">
                             多單續抱確認
                         </span>
-                        <span class="text-xs text-gray-400">今日狀態機裁決</span>
+                        <span class="text-xs text-slate-500">今日狀態機裁決</span>
                     </div>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold mt-2 tracking-tight" style="color: #10b981;">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold mt-2 tracking-tight" style="color: #059669;">
                         【積極做多信號觸發】
                     </h2>
-                    <p class="text-gray-300 mt-2 text-sm sm:text-base leading-relaxed max-w-3xl">
-                        站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z-Score: -0.21 > -0.6)
+                    <p class="text-slate-700 mt-2 text-sm sm:text-base leading-relaxed max-w-3xl">
+                        站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z: -0.32 > -0.6)
                     </p>
                 </div>
-                <div class="flex flex-row md:flex-col items-start md:items-end justify-between border-t md:border-t-0 pt-4 md:pt-0 border-gray-800">
-                    <div class="text-xs text-gray-400">當前市場體制</div>
-                    <div class="text-sm font-semibold mt-1 px-3 py-1 rounded-lg bg-gray-800/80 border border-gray-700" style="color: #059669;">
+                <div class="flex flex-row md:flex-col items-start md:items-end justify-between border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
+                    <div class="text-xs text-slate-400">當前市場體制</div>
+                    <div class="text-sm font-semibold mt-1 px-3 py-1 rounded-lg bg-slate-50 border border-slate-200" style="color: #0284c7;">
                         穩健多頭波段震盪 (Healthy Bullish Swing)
                     </div>
-                    <div class="text-xs text-gray-400 mt-3">大盤收盤價</div>
-                    <div class="text-2xl font-black text-white font-mono">46,152</div>
+                    <div class="text-xs text-slate-400 mt-3">大盤最新收盤價</div>
+                    <div class="text-3xl font-black text-slate-900 font-mono tracking-tight">46,016</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- NEW SECTION: Next Bar Critical Pivot Levels (轉折關鍵點位計算卡片) -->
+        <div class="white-card rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+                        次一交易日轉折關鍵點位預警（Pivot Key Levels Alert）
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">基於分數階代數方程與狀態機條件反向求根，精確計算明日行情生變之臨界點位與安全護城河</p>
+                </div>
+                <span class="text-xs px-2.5 py-1 rounded bg-slate-100 text-slate-600 font-mono font-medium">嚴格零未來函數</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
+                
+        <div class="rounded-xl p-4 bg-slate-50 border border-slate-200 relative overflow-hidden">
+            <div class="text-xs font-semibold px-2 py-0.5 rounded inline-block border bg-rose-50 text-rose-700 border-rose-200">多單平倉死叉警戒線</div>
+            <div class="text-2xl font-black text-slate-900 font-mono mt-2">37,567 點</div>
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>需下跌:</span>
+                <span class="text-rose-600 font-bold font-mono">-8,449 點 (-18.36%)</span>
+            </div>
+            <div class="text-xs text-slate-400 mt-2 border-t border-slate-200 pt-2">若次日收盤跌破此點位，分數階均線將翻為死叉，觸發多單平倉出場。</div>
+        </div>
+        
+        <div class="rounded-xl p-4 bg-slate-50 border border-slate-200 relative overflow-hidden">
+            <div class="text-xs font-semibold px-2 py-0.5 rounded inline-block border bg-amber-50 text-amber-700 border-amber-200">宏觀年線轉空警戒線</div>
+            <div class="text-2xl font-black text-slate-900 font-mono mt-2">37,773 點</div>
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>需下跌:</span>
+                <span class="text-rose-600 font-bold font-mono">-8,243 點 (-17.91%)</span>
+            </div>
+            <div class="text-xs text-slate-400 mt-2 border-t border-slate-200 pt-2">大盤長線牛熊分水嶺。跌破後宏觀體制翻為空頭，禁止順勢做多。</div>
+        </div>
+        
+        <div class="rounded-xl p-4 bg-slate-50 border border-slate-200 relative overflow-hidden">
+            <div class="text-xs font-semibold px-2 py-0.5 rounded inline-block border bg-purple-50 text-purple-700 border-purple-200">極端超買摸頂放空臨界</div>
+            <div class="text-2xl font-black text-slate-900 font-mono mt-2">49,024 點</div>
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>需上漲:</span>
+                <span class="text-emerald-600 font-bold font-mono">+3,008 點 (+6.54%)</span>
+            </div>
+            <div class="text-xs text-slate-400 mt-2 border-t border-slate-200 pt-2">動能極致透支。若達此點位且成交波動萎縮，觸發摸頂空單。</div>
+        </div>
+        
+        <div class="rounded-xl p-4 bg-slate-50 border border-slate-200 relative overflow-hidden">
+            <div class="text-xs font-semibold px-2 py-0.5 rounded inline-block border bg-pink-50 text-pink-700 border-pink-200">恐慌超跌抄底臨界線</div>
+            <div class="text-2xl font-black text-slate-900 font-mono mt-2">43,919 點</div>
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>需下跌:</span>
+                <span class="text-rose-600 font-bold font-mono">-2,097 點 (-4.56%)</span>
+            </div>
+            <div class="text-xs text-slate-400 mt-2 border-t border-slate-200 pt-2">若遭遇黑天鵝暴跌至此，將觸發高勝率逆勢抄底買單。</div>
+        </div>
+        
             </div>
         </div>
 
         <!-- 4 Primary Metric Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- 1. Z-Score -->
-            <div class="glass-card rounded-xl p-5">
+            <div class="white-card rounded-xl p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-400">分數階 Z-Score</span>
-                    <span class="text-xs px-2 py-0.5 rounded bg-gray-800 text-gray-300 font-mono">d*=0.30</span>
+                    <span class="text-xs font-semibold text-slate-500">分數階 Z-Score</span>
+                    <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono font-medium">d*=0.30</span>
                 </div>
                 <div class="mt-3 flex items-baseline gap-2">
-                    <span class="text-3xl font-black font-mono text-emerald-400">-0.21</span>
-                    <span class="text-xs text-gray-400">標準差偏離</span>
+                    <span class="text-3xl font-black font-mono text-emerald-600">-0.32</span>
+                    <span class="text-xs text-slate-400">標準差偏離</span>
                 </div>
-                <div class="mt-3 text-xs text-gray-400 space-y-1">
-                    <div class="flex justify-between"><span>趨勢門檻: > -0.60</span><span class="text-cyan-400">突破多</span></div>
-                    <div class="flex justify-between"><span>恐慌極值: < -1.80</span><span class="text-rose-400">超跌底</span></div>
+                <div class="mt-3 text-xs text-slate-500 space-y-1">
+                    <div class="flex justify-between"><span>順勢多門檻: > -0.60</span><span class="text-blue-600 font-medium">順勢多</span></div>
+                    <div class="flex justify-between"><span>恐慌底門檻: < -1.80</span><span class="text-rose-600 font-medium">抄底區</span></div>
                 </div>
             </div>
 
             <!-- 2. Volatility Rank -->
-            <div class="glass-card rounded-xl p-5">
+            <div class="white-card rounded-xl p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-400">YZ 波動率百分位</span>
-                    <span class="text-xs px-2 py-0.5 rounded bg-gray-800 text-gray-300 font-mono">252D Rank</span>
+                    <span class="text-xs font-semibold text-slate-500">YZ 波動率百分位</span>
+                    <span class="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono font-medium">252D Rank</span>
                 </div>
                 <div class="mt-3 flex items-baseline gap-2">
-                    <span class="text-3xl font-black font-mono text-cyan-400">29.0%</span>
-                    <span class="text-xs text-gray-400">歷史水位</span>
+                    <span class="text-3xl font-black font-mono text-cyan-600">29.0%</span>
+                    <span class="text-xs text-slate-400">歷史水位</span>
                 </div>
-                <div class="mt-3 text-xs text-gray-400 space-y-1">
-                    <div class="flex justify-between"><span>年化極差波動度:</span><span class="text-white font-mono">16.1%</span></div>
-                    <div class="flex justify-between"><span>恐慌洗盤臨界:</span><span class="text-rose-400">> 75.0%</span></div>
+                <div class="mt-3 text-xs text-slate-500 space-y-1">
+                    <div class="flex justify-between"><span>年化極差波動度:</span><span class="text-slate-800 font-mono font-medium">16.1%</span></div>
+                    <div class="flex justify-between"><span>恐慌洗盤警戒:</span><span class="text-rose-600 font-medium">> 75.0%</span></div>
                 </div>
             </div>
 
             <!-- 3. Macro 200MA -->
-            <div class="glass-card rounded-xl p-5">
+            <div class="white-card rounded-xl p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-400">宏觀年線 (200MA)</span>
-                    <span class="text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">多頭之上 (Bull)</span>
+                    <span class="text-xs font-semibold text-slate-500">宏觀年線 (200MA)</span>
+                    <span class="text-xs px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">多頭之上 (Bull)</span>
                 </div>
                 <div class="mt-3 flex items-baseline gap-2">
-                    <span class="text-2xl font-black font-mono text-white">37,722</span>
+                    <span class="text-2xl font-black font-mono text-slate-900">37,721</span>
                 </div>
-                <div class="mt-3 text-xs text-gray-400 space-y-1">
-                    <div class="flex justify-between"><span>與年線點數距離:</span><span class="font-mono text-emerald-400">+8,430 點</span></div>
-                    <div class="flex justify-between"><span>年線乖離率:</span><span class="font-mono text-emerald-400">+22.35%</span></div>
+                <div class="mt-3 text-xs text-slate-500 space-y-1">
+                    <div class="flex justify-between"><span>與年線點數距離:</span><span class="font-mono font-medium text-emerald-600">+8,295 點</span></div>
+                    <div class="flex justify-between"><span>年線乖離率:</span><span class="font-mono font-medium text-emerald-600">+21.99%</span></div>
                 </div>
             </div>
 
             <!-- 4. Kaufman ER -->
-            <div class="glass-card rounded-xl p-5">
+            <div class="white-card rounded-xl p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-gray-400">Kaufman 效率比率 (KER)</span>
-                    <span class="text-xs px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800">盤整雜訊</span>
+                    <span class="text-xs font-semibold text-slate-500">Kaufman 效率比率 (KER)</span>
+                    <span class="text-xs px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">盤整雜訊</span>
                 </div>
                 <div class="mt-3 flex items-baseline gap-2">
-                    <span class="text-3xl font-black font-mono text-emerald-400">0.040</span>
-                    <span class="text-xs text-gray-400">訊噪比</span>
+                    <span class="text-3xl font-black font-mono text-emerald-600">0.023</span>
+                    <span class="text-xs text-slate-400">訊噪比</span>
                 </div>
-                <div class="mt-3 text-xs text-gray-400 space-y-1">
-                    <div class="flex justify-between"><span>噪訊過濾門檻:</span><span class="text-cyan-400">> 0.200</span></div>
-                    <div class="flex justify-between"><span>市場碎形狀態:</span><span class="text-white">高碎形維度 (隨機漫步)</span></div>
+                <div class="mt-3 text-xs text-slate-500 space-y-1">
+                    <div class="flex justify-between"><span>噪訊過濾門檻:</span><span class="text-blue-600 font-medium">> 0.200</span></div>
+                    <div class="flex justify-between"><span>市場碎形維度:</span><span class="text-slate-800 font-medium">高碎形維度 (隨機漫步)</span></div>
                 </div>
             </div>
         </div>
@@ -158,13 +242,13 @@
         <!-- Charts Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Chart: Price & 200MA (Span 2) -->
-            <div class="glass-card rounded-2xl p-5 lg:col-span-2">
+            <div class="white-card rounded-2xl p-5 lg:col-span-2 shadow-xs">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-bold text-base text-white flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
-                        大盤日線走勢與宏觀 200MA 均線
+                    <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                        大盤日線走勢與宏觀 200MA 年線
                     </h3>
-                    <span class="text-xs text-gray-400">近 250 交易日軌跡</span>
+                    <span class="text-xs text-slate-500">近 250 交易日真實軌跡</span>
                 </div>
                 <div class="h-72 sm:h-80">
                     <canvas id="priceChart"></canvas>
@@ -172,13 +256,13 @@
             </div>
 
             <!-- Side Chart: Z-Score Thresholds -->
-            <div class="glass-card rounded-2xl p-5">
+            <div class="white-card rounded-2xl p-5 shadow-xs">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-bold text-base text-white flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>
+                    <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
                         分數階 Z-Score 偏離通道
                     </h3>
-                    <span class="text-xs text-gray-400">動態閾值界線</span>
+                    <span class="text-xs text-slate-500">動態閾值界線</span>
                 </div>
                 <div class="h-72 sm:h-80">
                     <canvas id="zChart"></canvas>
@@ -187,198 +271,251 @@
         </div>
 
         <!-- Sub Chart: Momentum Fast / Slow -->
-        <div class="glass-card rounded-2xl p-5">
+        <div class="white-card rounded-2xl p-5 shadow-xs">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
                     分數階微分均線動態（Fast 15 vs Slow 70）
                 </h3>
-                <span class="text-xs text-gray-400">平穩特徵多空交叉判定</span>
+                <span class="text-xs text-slate-500">平穩特徵多空交叉判定</span>
             </div>
             <div class="h-56">
                 <canvas id="momentumChart"></canvas>
             </div>
         </div>
 
-        <!-- Checklist & Diagnosis Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Signal Rule Checklist -->
-            <div class="glass-card rounded-2xl p-5">
-                <h3 class="font-bold text-base text-white mb-4 flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                    語法核心閾值即時檢驗清單 (Checklist)
-                </h3>
-                <div class="divide-y divide-gray-800">
-                    
+        <!-- NEW SECTION: Last 5 Trade Signals History (前五次交易訊號歷史紀錄) -->
+        <div class="white-card rounded-2xl p-6 shadow-sm">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-rose-600"></span>
+                        前五次交易訊號發出與平倉歷程（Last 5 Completed Signals）
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">狀態機精確交易配對清單，詳實記錄進出場時間、點位、盈虧與出場歸因</p>
+                </div>
+                <span class="text-xs px-2.5 py-1 rounded bg-slate-100 text-slate-600 font-mono font-medium">大台 200元/點計</span>
+            </div>
+
+            <!-- Current Active Position Banner if present -->
+            
+        <div class="mt-4 p-4 rounded-xl bg-blue-50/80 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <span class="px-2.5 py-1 rounded bg-blue-600 text-white font-bold text-xs uppercase pulse-badge">進行中部位 (Active)</span>
+                <span class="text-sm font-bold text-slate-800">2026-08-20 發出 做多 (Trend_LE) 於 44,934 點</span>
+            </div>
+            <div class="flex items-center gap-4 text-xs sm:text-sm">
+                <span class="text-slate-500">現價: <strong class="font-mono text-slate-900">46,016</strong></span>
+                <span class="text-slate-500">未實現損益: <strong class="font-mono text-emerald-600 text-base">+1,082 點 (NT$ +216,245)</strong></span>
+            </div>
+        </div>
+        
+
+            <div class="overflow-x-auto mt-4">
+                <table class="w-full text-xs sm:text-sm text-left text-slate-700">
+                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200 font-semibold">
+                        <tr>
+                            <th class="py-3 px-3">序號</th>
+                            <th class="py-3 px-3">部位</th>
+                            <th class="py-3 px-3">進場日期</th>
+                            <th class="py-3 px-3">進場信號</th>
+                            <th class="py-3 px-3">進場價</th>
+                            <th class="py-3 px-3">出場日期</th>
+                            <th class="py-3 px-3">出場原因</th>
+                            <th class="py-3 px-3">出場價</th>
+                            <th class="py-3 px-3 text-right">點數損益</th>
+                            <th class="py-3 px-3 text-right">淨損益 (TWD)</th>
+                            <th class="py-3 px-3 text-center">結果</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        
+        <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3 px-3 font-mono text-slate-400">#5</td>
+            <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-xs border bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">做多</span></td>
+            <td class="py-3 px-3 font-mono">2026-07-28</td>
+            <td class="py-3 px-3 font-semibold text-slate-800">Panic_LE</td>
+            <td class="py-3 px-3 font-mono font-medium">41,603</td>
+            <td class="py-3 px-3 font-mono">2026-07-31</td>
+            <td class="py-3 px-3 text-slate-600 text-xs">多單平倉：快線跌破慢線死叉 (Fast: 2.5399 < Slow: 2.5689)</td>
+            <td class="py-3 px-3 font-mono font-medium">43,120</td>
+            <td class="py-3 px-3 font-mono text-right text-emerald-600 font-bold">+1,516 點</td>
+            <td class="py-3 px-3 font-mono text-right text-emerald-600 font-bold">NT$ +303,078</td>
+            <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 font-bold">獲利 WIN</span></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3 px-3 font-mono text-slate-400">#4</td>
+            <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-xs border bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">做多</span></td>
+            <td class="py-3 px-3 font-mono">2026-04-13</td>
+            <td class="py-3 px-3 font-semibold text-slate-800">Trend_LE</td>
+            <td class="py-3 px-3 font-mono font-medium">35,457</td>
+            <td class="py-3 px-3 font-mono">2026-07-21</td>
+            <td class="py-3 px-3 text-slate-600 text-xs">多單平倉：快線跌破慢線死叉 (Fast: 2.5646 < Slow: 2.5703)</td>
+            <td class="py-3 px-3 font-mono font-medium">44,233</td>
+            <td class="py-3 px-3 font-mono text-right text-emerald-600 font-bold">+8,776 點</td>
+            <td class="py-3 px-3 font-mono text-right text-emerald-600 font-bold">NT$ +1,754,916</td>
+            <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 font-bold">獲利 WIN</span></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3 px-3 font-mono text-slate-400">#3</td>
+            <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-xs border bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">做多</span></td>
+            <td class="py-3 px-3 font-mono">2025-12-10</td>
+            <td class="py-3 px-3 font-semibold text-slate-800">Trend_LE</td>
+            <td class="py-3 px-3 font-mono font-medium">28,401</td>
+            <td class="py-3 px-3 font-mono">2026-04-01</td>
+            <td class="py-3 px-3 text-slate-600 text-xs">多單平倉：快線跌破慢線死叉 (Fast: 2.4900 < Slow: 2.4904)</td>
+            <td class="py-3 px-3 font-mono font-medium">33,175</td>
+            <td class="py-3 px-3 font-mono text-right text-emerald-600 font-bold">+4,774 點</td>
+            <td class="py-3 px-3 font-mono text-right text-emerald-600 font-bold">NT$ +954,618</td>
+            <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 font-bold">獲利 WIN</span></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3 px-3 font-mono text-slate-400">#2</td>
+            <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-xs border bg-emerald-50 text-emerald-700 border-emerald-200 font-bold">做多</span></td>
+            <td class="py-3 px-3 font-mono">2025-06-10</td>
+            <td class="py-3 px-3 font-semibold text-slate-800">Trend_LE</td>
+            <td class="py-3 px-3 font-mono font-medium">22,242</td>
+            <td class="py-3 px-3 font-mono">2025-11-24</td>
+            <td class="py-3 px-3 text-slate-600 text-xs">多單平倉：快線跌破慢線死叉 (Fast: 2.4419 < Slow: 2.4432)</td>
+            <td class="py-3 px-3 font-mono font-medium">26,504</td>
+            <td class="py-3 px-3 font-mono text-right text-emerald-600 font-bold">+4,262 點</td>
+            <td class="py-3 px-3 font-mono text-right text-emerald-600 font-bold">NT$ +852,220</td>
+            <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 font-bold">獲利 WIN</span></td>
+        </tr>
+        
+        <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3 px-3 font-mono text-slate-400">#1</td>
+            <td class="py-3 px-3"><span class="px-2 py-0.5 rounded text-xs border bg-rose-50 text-rose-700 border-rose-200 font-bold">放空</span></td>
+            <td class="py-3 px-3 font-mono">2025-04-10</td>
+            <td class="py-3 px-3 font-semibold text-slate-800">Breakdown_SE</td>
+            <td class="py-3 px-3 font-mono font-medium">19,000</td>
+            <td class="py-3 px-3 font-mono">2025-05-14</td>
+            <td class="py-3 px-3 text-slate-600 text-xs">空單回補：快線金叉慢線 (Fast: 2.3842 > Slow: 2.3784)</td>
+            <td class="py-3 px-3 font-mono font-medium">21,783</td>
+            <td class="py-3 px-3 font-mono text-right text-rose-600 font-bold">-2,783 點</td>
+            <td class="py-3 px-3 font-mono text-right text-rose-600 font-bold">NT$ -556,768</td>
+            <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded text-xs bg-rose-100 text-rose-800 font-bold">虧損 LOSS</span></td>
+        </tr>
+        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Checklist Section -->
+        <div class="white-card rounded-2xl p-6 shadow-sm">
+            <h3 class="font-bold text-base text-slate-900 mb-3 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                語法核心閾值即時檢驗清單 (Live Checklist)
+            </h3>
+            <div class="divide-y divide-slate-100">
+                
         <div class="py-3 flex items-center justify-between">
             <div>
-                <div class="text-sm font-semibold text-white flex items-center gap-2">
-                    <span class="text-emerald-400 font-bold">✓</span>
+                <div class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                    <span class="text-emerald-600 font-bold">✓</span>
                     宏觀 200MA 牛熊分界
                 </div>
-                <div class="text-xs text-gray-400 mt-0.5">現價 46,152 vs 年線 37,722 (+22.35%)</div>
+                <div class="text-xs text-slate-500 mt-0.5">現價 46,016 vs 年線 37,721 (+21.99%)</div>
             </div>
-            <div class="text-xs font-mono font-bold text-emerald-400">
-                多頭格局 (Bullish)
+            <div class="text-xs font-mono text-emerald-600 font-bold">
+                多頭之上 (Bullish)
             </div>
         </div>
         
         <div class="py-3 flex items-center justify-between">
             <div>
-                <div class="text-sm font-semibold text-white flex items-center gap-2">
-                    <span class="text-emerald-400 font-bold">✓</span>
+                <div class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                    <span class="text-emerald-600 font-bold">✓</span>
                     分數階均線排列 (Fast vs Slow)
                 </div>
-                <div class="text-xs text-gray-400 mt-0.5">Fast(15): 2.5783 | Slow(70): 2.5685</div>
+                <div class="text-xs text-slate-500 mt-0.5">Fast(15): 2.5781 | Slow(70): 2.5684</div>
             </div>
-            <div class="text-xs font-mono font-bold text-emerald-400">
+            <div class="text-xs font-mono text-emerald-600 font-bold">
                 動量金叉多頭 (Golden Cross)
             </div>
         </div>
         
         <div class="py-3 flex items-center justify-between">
             <div>
-                <div class="text-sm font-semibold text-white flex items-center gap-2">
-                    <span class="text-emerald-400 font-bold">✓</span>
+                <div class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                    <span class="text-emerald-600 font-bold">✓</span>
                     分數階 Z-Score 偏離階
                 </div>
-                <div class="text-xs text-gray-400 mt-0.5">做多門檻 > -0.60 | 恐慌抄底 < -1.80 | 力竭做空 > +2.20</div>
+                <div class="text-xs text-slate-500 mt-0.5">順勢多 > -0.60 | 恐慌抄底 < -1.80 | 力竭摸頂 > +2.20</div>
             </div>
-            <div class="text-xs font-mono font-bold text-emerald-400">
-                -0.21 σ
+            <div class="text-xs font-mono text-emerald-600 font-bold">
+                -0.32 σ
             </div>
         </div>
         
         <div class="py-3 flex items-center justify-between">
             <div>
-                <div class="text-sm font-semibold text-white flex items-center gap-2">
-                    <span class="text-emerald-400 font-bold">✓</span>
+                <div class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                    <span class="text-emerald-600 font-bold">✓</span>
                     Yang-Zhang 極差波動率分位
                 </div>
-                <div class="text-xs text-gray-400 mt-0.5">年化波動率: 16.1% (恐慌臨界點: > 75%)</div>
+                <div class="text-xs text-slate-500 mt-0.5">年化波動率: 16.1% (恐慌臨界: > 75%)</div>
             </div>
-            <div class="text-xs font-mono font-bold text-emerald-400">
+            <div class="text-xs font-mono text-emerald-600 font-bold">
                 29.0 %
             </div>
         </div>
         
         <div class="py-3 flex items-center justify-between">
             <div>
-                <div class="text-sm font-semibold text-white flex items-center gap-2">
-                    <span class="text-gray-400 font-bold">○</span>
+                <div class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                    <span class="text-slate-400 font-medium">○</span>
                     Kaufman 效率比率 (KER)
                 </div>
-                <div class="text-xs text-gray-400 mt-0.5">當前 ER: 0.040 (門檻: > 0.2)</div>
+                <div class="text-xs text-slate-500 mt-0.5">當前 ER: 0.023 (門檻: > 0.2)</div>
             </div>
-            <div class="text-xs font-mono font-bold text-gray-400">
+            <div class="text-xs font-mono text-slate-400 font-medium">
                 隨機震盪雜訊
             </div>
         </div>
         
-                </div>
-            </div>
-
-            <!-- Recent Signals Log -->
-            <div class="glass-card rounded-2xl p-5">
-                <h3 class="font-bold text-base text-white mb-4 flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
-                    最近歷史狀態機信號觸發紀錄 (Audit Log)
-                </h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-xs text-left text-gray-300">
-                        <thead class="text-gray-400 uppercase bg-gray-800/40">
-                            <tr>
-                                <th class="py-2.5 px-3">日期</th>
-                                <th class="py-2.5 px-3">觸發信號</th>
-                                <th class="py-2.5 px-3">收盤價</th>
-                                <th class="py-2.5 px-3">Z-Score</th>
-                                <th class="py-2.5 px-3">判定依據</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-800">
-                            
-        <tr class="hover:bg-gray-800/30">
-            <td class="py-2.5 px-3 font-mono">2026-09-11</td>
-            <td class="py-2.5 px-3 font-bold text-emerald-400">Trend_LE</td>
-            <td class="py-2.5 px-3 font-mono">46,152</td>
-            <td class="py-2.5 px-3 font-mono">-0.21</td>
-            <td class="py-2.5 px-3 text-gray-400">站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z-Score: -0.21 > -0.6)</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-800/30">
-            <td class="py-2.5 px-3 font-mono">2026-09-10</td>
-            <td class="py-2.5 px-3 font-bold text-emerald-400">Trend_LE</td>
-            <td class="py-2.5 px-3 font-mono">46,940</td>
-            <td class="py-2.5 px-3 font-mono">+0.38</td>
-            <td class="py-2.5 px-3 text-gray-400">站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z-Score: 0.38 > -0.6)</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-800/30">
-            <td class="py-2.5 px-3 font-mono">2026-09-09</td>
-            <td class="py-2.5 px-3 font-bold text-emerald-400">Trend_LE</td>
-            <td class="py-2.5 px-3 font-mono">47,183</td>
-            <td class="py-2.5 px-3 font-mono">+0.62</td>
-            <td class="py-2.5 px-3 text-gray-400">站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z-Score: 0.62 > -0.6)</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-800/30">
-            <td class="py-2.5 px-3 font-mono">2026-09-08</td>
-            <td class="py-2.5 px-3 font-bold text-emerald-400">Trend_LE</td>
-            <td class="py-2.5 px-3 font-mono">47,106</td>
-            <td class="py-2.5 px-3 font-mono">+0.58</td>
-            <td class="py-2.5 px-3 text-gray-400">站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z-Score: 0.58 > -0.6)</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-800/30">
-            <td class="py-2.5 px-3 font-mono">2026-09-07</td>
-            <td class="py-2.5 px-3 font-bold text-emerald-400">Trend_LE</td>
-            <td class="py-2.5 px-3 font-mono">47,326</td>
-            <td class="py-2.5 px-3 font-mono">+0.99</td>
-            <td class="py-2.5 px-3 text-gray-400">站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z-Score: 0.99 > -0.6)</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-800/30">
-            <td class="py-2.5 px-3 font-mono">2026-09-04</td>
-            <td class="py-2.5 px-3 font-bold text-emerald-400">Trend_LE</td>
-            <td class="py-2.5 px-3 font-mono">46,551</td>
-            <td class="py-2.5 px-3 font-mono">+0.53</td>
-            <td class="py-2.5 px-3 text-gray-400">站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z-Score: 0.53 > -0.6)</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-800/30">
-            <td class="py-2.5 px-3 font-mono">2026-09-03</td>
-            <td class="py-2.5 px-3 font-bold text-emerald-400">Trend_LE</td>
-            <td class="py-2.5 px-3 font-mono">45,858</td>
-            <td class="py-2.5 px-3 font-mono">-0.12</td>
-            <td class="py-2.5 px-3 text-gray-400">站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z-Score: -0.12 > -0.6)</td>
-        </tr>
-        
-        <tr class="hover:bg-gray-800/30">
-            <td class="py-2.5 px-3 font-mono">2026-09-02</td>
-            <td class="py-2.5 px-3 font-bold text-emerald-400">Trend_LE</td>
-            <td class="py-2.5 px-3 font-mono">46,165</td>
-            <td class="py-2.5 px-3 font-mono">+0.02</td>
-            <td class="py-2.5 px-3 text-gray-400">站上年線且動量金叉順勢做多 (Close > 200MA, Fast > Slow, Z-Score: 0.02 > -0.6)</td>
-        </tr>
-        
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
 
     </main>
 
-    <footer class="mt-12 text-center text-xs text-gray-500 border-t border-gray-900 pt-6">
+    <footer class="mt-12 text-center text-xs text-slate-400 border-t border-slate-200 pt-6">
         <p>Feature Adaptive Quantitative Research System &copy; 2026. Powered by GitHub Actions & GitHub Pages.</p>
-        <p class="mt-1 text-gray-600">本系統僅供量化學術研究與客觀計量指標監控，不構成個人投資推薦與要約。</p>
+        <p class="mt-1 text-slate-400">本系統僅供量化計量學術研究與客觀指標監控，不構成任何個人投資買賣要約。</p>
     </footer>
 
-    <!-- Chart Configuration Scripts -->
+    <!-- Font Scaling & Chart Scripts -->
     <script>
-        const chartData = {"dates": ["2025-09-02", "2025-09-03", "2025-09-04", "2025-09-05", "2025-09-08", "2025-09-09", "2025-09-10", "2025-09-11", "2025-09-12", "2025-09-15", "2025-09-16", "2025-09-17", "2025-09-18", "2025-09-19", "2025-09-22", "2025-09-23", "2025-09-24", "2025-09-25", "2025-09-26", "2025-09-30", "2025-10-01", "2025-10-02", "2025-10-03", "2025-10-07", "2025-10-08", "2025-10-09", "2025-10-13", "2025-10-14", "2025-10-15", "2025-10-16", "2025-10-17", "2025-10-20", "2025-10-21", "2025-10-22", "2025-10-23", "2025-10-27", "2025-10-28", "2025-10-29", "2025-10-30", "2025-10-31", "2025-11-03", "2025-11-04", "2025-11-05", "2025-11-06", "2025-11-07", "2025-11-10", "2025-11-11", "2025-11-12", "2025-11-13", "2025-11-14", "2025-11-17", "2025-11-18", "2025-11-19", "2025-11-20", "2025-11-21", "2025-11-24", "2025-11-25", "2025-11-26", "2025-11-27", "2025-11-28", "2025-12-01", "2025-12-02", "2025-12-03", "2025-12-04", "2025-12-05", "2025-12-08", "2025-12-09", "2025-12-10", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2025-12-17", "2025-12-18", "2025-12-19", "2025-12-22", "2025-12-23", "2025-12-24", "2025-12-26", "2025-12-29", "2025-12-30", "2025-12-31", "2026-01-02", "2026-01-05", "2026-01-06", "2026-01-07", "2026-01-08", "2026-01-09", "2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15", "2026-01-16", "2026-01-19", "2026-01-20", "2026-01-21", "2026-01-22", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-01-29", "2026-01-30", "2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06", "2026-02-09", "2026-02-10", "2026-02-11", "2026-02-23", "2026-02-24", "2026-02-25", "2026-02-26", "2026-03-02", "2026-03-03", "2026-03-04", "2026-03-05", "2026-03-06", "2026-03-09", "2026-03-10", "2026-03-11", "2026-03-12", "2026-03-13", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10", "2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03", "2026-07-06", "2026-07-07", "2026-07-08", "2026-07-09", "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17", "2026-07-20", "2026-07-21", "2026-07-22", "2026-07-23", "2026-07-24", "2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30", "2026-07-31", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13", "2026-08-14", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20", "2026-08-21", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11"], "closes": [24016.8, 24100.3, 24179.8, 24494.6, 24547.4, 24855.2, 25192.6, 25215.7, 25474.6, 25357.2, 25629.6, 25438.2, 25769.4, 25578.4, 25880.6, 26247.4, 26196.7, 26023.8, 25580.3, 25820.5, 25982.9, 26378.4, 26761.1, 27211.9, 27063.7, 27301.9, 26923.4, 26793.2, 27275.7, 27647.9, 27302.4, 27688.6, 27752.4, 27648.9, 27532.3, 27993.6, 27949.1, 28294.7, 28287.5, 28233.3, 28334.6, 28116.6, 27717.1, 27899.4, 27651.4, 27869.5, 27784.9, 27947.1, 27903.6, 27397.5, 27447.3, 26756.1, 26580.1, 27426.4, 26434.9, 26504.2, 26912.2, 27409.5, 27554.5, 27626.5, 27342.5, 27564.3, 27793.0, 27795.7, 27980.9, 28303.8, 28182.6, 28400.7, 28024.8, 28198.0, 27866.9, 27536.7, 27525.2, 27468.5, 27696.3, 28149.6, 28310.5, 28372.0, 28556.0, 28810.9, 28707.1, 28963.6, 29349.8, 30105.0, 30576.3, 30435.5, 30360.6, 30289.0, 30567.3, 30707.2, 30941.8, 30810.6, 31408.7, 31639.3, 31760.0, 31246.4, 31746.1, 31961.5, 32064.5, 32317.9, 32803.8, 32536.3, 32063.8, 31624.0, 32195.4, 32289.8, 31801.3, 31782.9, 32404.6, 33073.0, 33605.7, 33773.3, 34700.8, 35413.1, 35414.5, 35095.1, 34323.6, 32828.9, 33672.9, 33599.5, 32110.4, 32771.9, 34114.2, 33581.9, 33400.3, 33342.5, 33836.6, 34348.6, 33689.7, 33543.9, 32722.5, 32612.2, 33439.1, 33337.6, 33112.6, 32518.2, 31723.0, 33174.8, 32572.4, 33229.8, 34761.4, 34861.2, 35417.8, 35457.3, 36296.1, 36722.1, 37132.0, 36804.3, 36958.8, 37605.1, 37878.5, 37714.1, 38932.4, 39616.6, 39521.7, 39303.5, 38926.6, 40705.1, 40769.3, 41138.9, 41933.8, 41603.9, 41790.1, 41898.3, 41374.5, 41751.8, 41172.4, 40891.8, 40175.6, 40020.8, 41368.2, 42268.0, 43644.4, 43525.4, 44256.8, 43636.4, 44732.9, 45337.9, 45557.3, 46459.2, 45677.5, 45070.9, 43502.8, 44704.4, 43225.5, 43149.5, 44169.0, 45397.0, 45809.2, 45877.4, 46465.2, 47741.5, 47100.6, 46043.6, 46255.3, 44571.8, 44999.9, 46125.9, 47019.0, 46744.2, 46780.6, 46556.4, 45479.1, 45734.4, 45354.6, 45380.5, 44737.9, 45631.6, 45625.0, 42671.3, 42449.7, 44232.9, 44825.8, 44850.8, 43654.8, 43634.2, 41603.4, 40039.2, 39933.3, 43119.8, 43386.4, 43360.7, 44611.6, 44396.7, 44225.9, 44928.8, 45120.7, 45518.1, 46021.5, 45811.0, 45857.3, 45308.7, 44719.4, 44933.7, 45224.3, 44762.3, 45169.5, 45832.6, 45975.2, 46331.4, 46128.5, 46948.7, 46164.7, 45857.7, 46551.1, 47326.3, 47105.8, 47183.4, 46940.5, 46152.1], "macro_200ma": [22440.1, 22442.8, 22446.1, 22453.7, 22462.1, 22472.8, 22485.0, 22498.4, 22511.5, 22524.9, 22540.2, 22552.9, 22567.0, 22581.5, 22599.2, 22619.0, 22638.7, 22655.1, 22667.9, 22680.7, 22694.3, 22710.2, 22727.6, 22748.1, 22768.9, 22790.1, 22809.6, 22828.4, 22849.7, 22872.1, 22893.9, 22919.8, 22943.1, 22965.7, 22987.3, 23011.0, 23034.4, 23059.9, 23086.2, 23113.2, 23140.3, 23163.1, 23183.5, 23205.9, 23228.8, 23253.1, 23279.6, 23305.3, 23332.3, 23354.1, 23375.6, 23393.1, 23409.5, 23429.0, 23447.7, 23466.2, 23485.0, 23505.4, 23525.8, 23547.7, 23567.5, 23588.8, 23610.8, 23634.0, 23656.4, 23679.6, 23702.5, 23727.1, 23748.5, 23771.7, 23794.6, 23815.3, 23837.6, 23861.2, 23886.7, 23913.1, 23941.1, 23970.0, 24000.5, 24034.2, 24066.4, 24101.4, 24138.3, 24178.2, 24219.7, 24262.1, 24302.0, 24342.4, 24384.7, 24426.9, 24470.3, 24514.6, 24563.6, 24618.3, 24670.7, 24720.5, 24783.1, 24850.6, 24923.9, 24990.5, 25056.9, 25122.0, 25183.0, 25243.8, 25308.1, 25372.6, 25436.0, 25501.0, 25564.8, 25632.8, 25701.5, 25770.2, 25842.5, 25918.4, 25991.5, 26064.3, 26133.3, 26194.7, 26260.4, 26323.8, 26378.7, 26435.9, 26497.6, 26556.8, 26614.6, 26673.7, 26735.3, 26798.0, 26858.1, 26917.5, 26973.5, 27029.9, 27090.3, 27150.2, 27210.8, 27267.7, 27318.2, 27375.7, 27430.3, 27487.5, 27550.1, 27612.1, 27677.7, 27744.6, 27815.9, 27888.4, 27962.3, 28036.3, 28110.9, 28190.2, 28268.7, 28345.1, 28427.3, 28512.5, 28598.8, 28682.5, 28764.3, 28854.3, 28945.4, 29038.9, 29136.8, 29232.2, 29327.6, 29423.4, 29517.2, 29611.8, 29702.4, 29791.3, 29875.3, 29958.7, 30050.6, 30145.3, 30246.7, 30347.5, 30451.7, 30553.9, 30660.2, 30769.2, 30879.8, 30995.2, 31105.3, 31213.4, 31310.9, 31414.3, 31509.8, 31604.7, 31703.7, 31809.5, 31916.9, 32023.9, 32134.4, 32255.0, 32370.7, 32482.1, 32592.0, 32693.3, 32795.7, 32905.2, 33019.1, 33132.4, 33246.3, 33358.5, 33465.0, 33571.2, 33675.3, 33777.9, 33875.6, 33977.7, 34078.5, 34165.0, 34249.1, 34343.1, 34438.4, 34534.8, 34623.6, 34710.6, 34787.6, 34857.7, 34929.4, 35015.9, 35102.9, 35187.9, 35277.1, 35363.0, 35448.8, 35537.0, 35628.0, 35721.6, 35815.3, 35906.1, 35998.9, 36087.0, 36171.8, 36258.3, 36346.7, 36430.6, 36516.7, 36604.4, 36692.8, 36783.3, 36872.3, 36966.4, 37058.7, 37148.5, 37243.0, 37340.2, 37436.8, 37533.0, 37628.2, 37722.0], "z_scores": [0.08, 0.44, 0.63, 1.59, 1.33, 2.06, 2.58, 2.1, 2.53, 1.82, 2.45, 1.5, 2.34, 1.41, 2.19, 2.7, 2.06, 1.41, 0.28, 1.17, 1.47, 2.25, 2.67, 3.05, 2.15, 2.41, 1.29, 1.08, 2.06, 2.35, 1.31, 2.01, 1.8, 1.41, 1.12, 1.94, 1.52, 1.97, 1.67, 1.43, 1.5, 0.99, 0.29, 0.8, 0.28, 0.76, 0.5, 0.79, 0.58, -0.4, -0.06, -1.42, -1.32, 0.68, -1.77, -1.1, -0.13, 0.71, 0.66, 0.6, -0.19, 0.39, 0.78, 0.52, 0.87, 1.42, 0.76, 1.19, 0.01, 0.56, -0.41, -1.06, -0.8, -0.83, -0.18, 0.81, 0.82, 0.7, 1.0, 1.36, 0.8, 1.31, 1.9, 2.98, 3.01, 2.11, 1.73, 1.46, 1.8, 1.76, 1.88, 1.4, 2.18, 2.09, 1.93, 1.01, 1.73, 1.73, 1.63, 1.75, 2.05, 1.43, 0.83, 0.42, 1.22, 1.14, 0.48, 0.57, 1.29, 1.78, 1.99, 1.86, 2.55, 2.68, 2.28, 1.77, 0.96, -0.44, 0.92, 0.7, -0.92, 0.26, 1.6, 0.59, 0.38, 0.32, 0.85, 1.21, 0.24, 0.18, -0.75, -0.61, 0.58, 0.18, -0.18, -0.97, -1.83, 0.7, -0.67, 0.42, 2.28, 1.62, 1.97, 1.54, 2.27, 2.22, 2.21, 1.47, 1.52, 1.98, 1.88, 1.43, 2.4, 2.44, 1.92, 1.54, 1.13, 2.44, 1.95, 1.93, 2.17, 1.62, 1.62, 1.55, 1.09, 1.32, 0.85, 0.71, 0.27, 0.31, 1.24, 1.52, 2.01, 1.52, 1.73, 1.14, 1.66, 1.72, 1.58, 1.83, 1.23, 0.91, 0.12, 1.01, 0.07, 0.23, 0.86, 1.34, 1.28, 1.13, 1.34, 1.87, 1.2, 0.55, 0.8, -0.32, 0.3, 1.16, 1.67, 1.15, 1.06, 0.75, -0.29, 0.2, -0.22, -0.13, -0.81, 0.26, -0.0, -2.98, -2.23, -0.19, 0.01, -0.22, -1.42, -1.13, -2.77, -3.27, -2.57, 0.21, -0.19, -0.43, 0.43, -0.04, -0.24, 0.26, 0.21, 0.39, 0.61, 0.28, 0.29, -0.17, -0.52, -0.2, 0.01, -0.4, -0.01, 0.43, 0.34, 0.51, 0.21, 0.84, 0.02, -0.12, 0.53, 0.99, 0.58, 0.62, 0.38, -0.21], "fd_fast": [2.421, 2.4197, 2.4193, 2.4195, 2.4192, 2.4201, 2.4236, 2.4253, 2.4281, 2.4287, 2.4302, 2.4304, 2.4326, 2.4339, 2.4364, 2.4396, 2.4419, 2.4434, 2.4431, 2.4438, 2.4442, 2.4448, 2.4464, 2.4481, 2.4496, 2.4509, 2.4518, 2.4515, 2.4534, 2.455, 2.4547, 2.4559, 2.4575, 2.4598, 2.4609, 2.4627, 2.4633, 2.464, 2.4637, 2.464, 2.464, 2.4646, 2.4645, 2.4638, 2.462, 2.462, 2.4608, 2.4602, 2.4598, 2.4584, 2.4564, 2.4532, 2.4495, 2.4485, 2.4449, 2.4419, 2.4407, 2.4414, 2.4414, 2.442, 2.441, 2.441, 2.4411, 2.4411, 2.4427, 2.4444, 2.4472, 2.4503, 2.4499, 2.453, 2.4544, 2.4541, 2.4529, 2.4519, 2.4515, 2.4529, 2.4538, 2.4541, 2.4549, 2.4558, 2.4555, 2.4564, 2.4575, 2.461, 2.4643, 2.4676, 2.4711, 2.4741, 2.4777, 2.4806, 2.4829, 2.4845, 2.4875, 2.4902, 2.4925, 2.4939, 2.496, 2.4975, 2.4977, 2.4978, 2.4996, 2.5007, 2.501, 2.5, 2.5005, 2.5006, 2.5001, 2.4986, 2.4984, 2.4992, 2.502, 2.5033, 2.5059, 2.5092, 2.5114, 2.512, 2.512, 2.5104, 2.5121, 2.512, 2.509, 2.5094, 2.5122, 2.5119, 2.5102, 2.508, 2.507, 2.5053, 2.5013, 2.4979, 2.494, 2.4919, 2.4943, 2.4936, 2.4928, 2.4938, 2.4914, 2.49, 2.4885, 2.4889, 2.4921, 2.4933, 2.4945, 2.497, 2.5007, 2.5062, 2.5115, 2.5139, 2.517, 2.5215, 2.5271, 2.5333, 2.5379, 2.5448, 2.5493, 2.5504, 2.5516, 2.5552, 2.5585, 2.5606, 2.5635, 2.565, 2.5678, 2.5703, 2.5707, 2.5719, 2.5726, 2.571, 2.5679, 2.5658, 2.5668, 2.5693, 2.5703, 2.5711, 2.5724, 2.5714, 2.5731, 2.5751, 2.5769, 2.5806, 2.5819, 2.5835, 2.5832, 2.5864, 2.5869, 2.5855, 2.585, 2.5844, 2.5849, 2.5842, 2.5856, 2.5868, 2.586, 2.5839, 2.5814, 2.5783, 2.5773, 2.5802, 2.5815, 2.5844, 2.5868, 2.587, 2.5843, 2.5824, 2.5803, 2.5779, 2.5731, 2.5717, 2.5716, 2.5663, 2.5645, 2.5646, 2.5634, 2.5611, 2.5578, 2.5549, 2.5495, 2.5441, 2.5389, 2.5399, 2.5399, 2.5404, 2.5409, 2.5408, 2.5448, 2.5488, 2.5495, 2.5502, 2.5517, 2.5544, 2.5567, 2.5611, 2.5663, 2.5712, 2.5708, 2.5704, 2.5712, 2.5712, 2.5719, 2.5734, 2.5734, 2.5745, 2.5738, 2.5724, 2.5728, 2.5741, 2.5755, 2.5776, 2.5787, 2.5783], "fd_slow": [2.4108, 2.4113, 2.4117, 2.4124, 2.4132, 2.414, 2.4146, 2.4152, 2.4159, 2.4164, 2.4168, 2.417, 2.4176, 2.4182, 2.4189, 2.4196, 2.4202, 2.4209, 2.4213, 2.4221, 2.4226, 2.4233, 2.424, 2.4249, 2.4259, 2.4267, 2.4273, 2.4278, 2.4287, 2.4297, 2.4306, 2.4315, 2.4323, 2.433, 2.4338, 2.4347, 2.4353, 2.4362, 2.4368, 2.4375, 2.4384, 2.439, 2.4394, 2.4399, 2.4403, 2.4411, 2.4415, 2.4421, 2.4426, 2.443, 2.4433, 2.4434, 2.4432, 2.4435, 2.4433, 2.4432, 2.4433, 2.4437, 2.4441, 2.4444, 2.4447, 2.4455, 2.4461, 2.4467, 2.4472, 2.4478, 2.4481, 2.4488, 2.4493, 2.4499, 2.4504, 2.4507, 2.4509, 2.4511, 2.4514, 2.4517, 2.4519, 2.4522, 2.4525, 2.453, 2.4532, 2.4537, 2.4542, 2.4551, 2.4559, 2.4564, 2.4569, 2.4575, 2.4585, 2.4592, 2.46, 2.4605, 2.4611, 2.4615, 2.4622, 2.4624, 2.4632, 2.464, 2.4646, 2.4651, 2.466, 2.4665, 2.4668, 2.4671, 2.4677, 2.4681, 2.4684, 2.4685, 2.469, 2.4697, 2.4705, 2.4715, 2.4729, 2.4743, 2.4757, 2.4767, 2.4775, 2.4776, 2.4783, 2.4792, 2.4794, 2.4804, 2.4819, 2.4825, 2.4837, 2.4847, 2.4857, 2.4866, 2.4871, 2.4877, 2.4881, 2.4884, 2.489, 2.4896, 2.49, 2.49, 2.4899, 2.4904, 2.4908, 2.4914, 2.4928, 2.4941, 2.4955, 2.4968, 2.4982, 2.4995, 2.5007, 2.5018, 2.5029, 2.504, 2.5053, 2.5063, 2.5077, 2.5088, 2.5096, 2.5105, 2.5113, 2.5129, 2.5141, 2.5154, 2.5167, 2.518, 2.519, 2.52, 2.5208, 2.522, 2.5228, 2.5234, 2.5238, 2.5242, 2.5249, 2.5261, 2.5277, 2.5293, 2.5308, 2.5319, 2.5336, 2.5354, 2.5368, 2.5383, 2.5392, 2.54, 2.54, 2.5404, 2.5404, 2.5407, 2.5417, 2.5436, 2.5449, 2.5462, 2.5483, 2.5502, 2.5512, 2.5523, 2.5535, 2.5542, 2.555, 2.556, 2.5576, 2.5589, 2.5606, 2.5621, 2.5629, 2.5639, 2.565, 2.5663, 2.5677, 2.5687, 2.5701, 2.5701, 2.5698, 2.5703, 2.5708, 2.5713, 2.5711, 2.571, 2.5702, 2.5694, 2.5686, 2.5689, 2.5691, 2.5692, 2.5694, 2.5692, 2.5691, 2.5694, 2.5698, 2.5697, 2.5698, 2.5698, 2.5696, 2.5694, 2.569, 2.5688, 2.569, 2.5687, 2.569, 2.5694, 2.5701, 2.5708, 2.5708, 2.571, 2.5705, 2.5701, 2.5699, 2.5701, 2.5699, 2.5696, 2.5692, 2.5685]};
+        // 1. Font Zoom Scaling Controller
+        let currentZoom = 100;
+        function applyZoom() {
+            document.documentElement.style.fontSize = currentZoom + '%';
+        }
+        function changeFontSize(delta) {
+            currentZoom = Math.min(Math.max(currentZoom + delta, 80), 140);
+            applyZoom();
+            localStorage.setItem('fa_font_zoom', currentZoom);
+        }
+        function resetFontSize() {
+            currentZoom = 100;
+            applyZoom();
+            localStorage.removeItem('fa_font_zoom');
+        }
+        // Load saved zoom preference
+        const savedZoom = localStorage.getItem('fa_font_zoom');
+        if (savedZoom) {
+            currentZoom = parseInt(savedZoom, 10);
+            applyZoom();
+        }
 
-        // 1. Price Chart
+        // 2. Interactive Charts
+        const chartData = {"dates": ["2025-09-02", "2025-09-03", "2025-09-04", "2025-09-05", "2025-09-08", "2025-09-09", "2025-09-10", "2025-09-11", "2025-09-12", "2025-09-15", "2025-09-16", "2025-09-17", "2025-09-18", "2025-09-19", "2025-09-22", "2025-09-23", "2025-09-24", "2025-09-25", "2025-09-26", "2025-09-30", "2025-10-01", "2025-10-02", "2025-10-03", "2025-10-07", "2025-10-08", "2025-10-09", "2025-10-13", "2025-10-14", "2025-10-15", "2025-10-16", "2025-10-17", "2025-10-20", "2025-10-21", "2025-10-22", "2025-10-23", "2025-10-27", "2025-10-28", "2025-10-29", "2025-10-30", "2025-10-31", "2025-11-03", "2025-11-04", "2025-11-05", "2025-11-06", "2025-11-07", "2025-11-10", "2025-11-11", "2025-11-12", "2025-11-13", "2025-11-14", "2025-11-17", "2025-11-18", "2025-11-19", "2025-11-20", "2025-11-21", "2025-11-24", "2025-11-25", "2025-11-26", "2025-11-27", "2025-11-28", "2025-12-01", "2025-12-02", "2025-12-03", "2025-12-04", "2025-12-05", "2025-12-08", "2025-12-09", "2025-12-10", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2025-12-17", "2025-12-18", "2025-12-19", "2025-12-22", "2025-12-23", "2025-12-24", "2025-12-26", "2025-12-29", "2025-12-30", "2025-12-31", "2026-01-02", "2026-01-05", "2026-01-06", "2026-01-07", "2026-01-08", "2026-01-09", "2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15", "2026-01-16", "2026-01-19", "2026-01-20", "2026-01-21", "2026-01-22", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-01-29", "2026-01-30", "2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06", "2026-02-09", "2026-02-10", "2026-02-11", "2026-02-23", "2026-02-24", "2026-02-25", "2026-02-26", "2026-03-02", "2026-03-03", "2026-03-04", "2026-03-05", "2026-03-06", "2026-03-09", "2026-03-10", "2026-03-11", "2026-03-12", "2026-03-13", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10", "2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03", "2026-07-06", "2026-07-07", "2026-07-08", "2026-07-09", "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17", "2026-07-20", "2026-07-21", "2026-07-22", "2026-07-23", "2026-07-24", "2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30", "2026-07-31", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13", "2026-08-14", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20", "2026-08-21", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11"], "closes": [24016.8, 24100.3, 24179.8, 24494.6, 24547.4, 24855.2, 25192.6, 25215.7, 25474.6, 25357.2, 25629.6, 25438.2, 25769.4, 25578.4, 25880.6, 26247.4, 26196.7, 26023.8, 25580.3, 25820.5, 25982.9, 26378.4, 26761.1, 27211.9, 27063.7, 27301.9, 26923.4, 26793.2, 27275.7, 27647.9, 27302.4, 27688.6, 27752.4, 27648.9, 27532.3, 27993.6, 27949.1, 28294.7, 28287.5, 28233.3, 28334.6, 28116.6, 27717.1, 27899.4, 27651.4, 27869.5, 27784.9, 27947.1, 27903.6, 27397.5, 27447.3, 26756.1, 26580.1, 27426.4, 26434.9, 26504.2, 26912.2, 27409.5, 27554.5, 27626.5, 27342.5, 27564.3, 27793.0, 27795.7, 27980.9, 28303.8, 28182.6, 28400.7, 28024.8, 28198.0, 27866.9, 27536.7, 27525.2, 27468.5, 27696.3, 28149.6, 28310.5, 28372.0, 28556.0, 28810.9, 28707.1, 28963.6, 29349.8, 30105.0, 30576.3, 30435.5, 30360.6, 30289.0, 30567.3, 30707.2, 30941.8, 30810.6, 31408.7, 31639.3, 31760.0, 31246.4, 31746.1, 31961.5, 32064.5, 32317.9, 32803.8, 32536.3, 32063.8, 31624.0, 32195.4, 32289.8, 31801.3, 31782.9, 32404.6, 33073.0, 33605.7, 33773.3, 34700.8, 35413.1, 35414.5, 35095.1, 34323.6, 32828.9, 33672.9, 33599.5, 32110.4, 32771.9, 34114.2, 33581.9, 33400.3, 33342.5, 33836.6, 34348.6, 33689.7, 33543.9, 32722.5, 32612.2, 33439.1, 33337.6, 33112.6, 32518.2, 31723.0, 33174.8, 32572.4, 33229.8, 34761.4, 34861.2, 35417.8, 35457.3, 36296.1, 36722.1, 37132.0, 36804.3, 36958.8, 37605.1, 37878.5, 37714.1, 38932.4, 39616.6, 39521.7, 39303.5, 38926.6, 40705.1, 40769.3, 41138.9, 41933.8, 41603.9, 41790.1, 41898.3, 41374.5, 41751.8, 41172.4, 40891.8, 40175.6, 40020.8, 41368.2, 42268.0, 43644.4, 43525.4, 44256.8, 43636.4, 44732.9, 45337.9, 45557.3, 46459.2, 45677.5, 45070.9, 43502.8, 44704.4, 43225.5, 43149.5, 44169.0, 45397.0, 45809.2, 45877.4, 46465.2, 47741.5, 47100.6, 46043.6, 46255.3, 44571.8, 44999.9, 46125.9, 47019.0, 46744.2, 46780.6, 46556.4, 45479.1, 45734.4, 45354.6, 45380.5, 44737.9, 45631.6, 45625.0, 42671.3, 42449.7, 44232.9, 44825.8, 44850.8, 43654.8, 43634.2, 41603.4, 40039.2, 39933.3, 43119.8, 43386.4, 43360.7, 44611.6, 44396.7, 44225.9, 44928.8, 45120.7, 45518.1, 46021.5, 45811.0, 45857.3, 45308.7, 44719.4, 44933.7, 45224.3, 44762.3, 45169.5, 45832.6, 45975.2, 46331.4, 46128.5, 46948.7, 46164.7, 45857.7, 46551.1, 47326.3, 47105.8, 47183.4, 46940.5, 46016.0], "macro_200ma": [22440.1, 22442.8, 22446.1, 22453.7, 22462.1, 22472.8, 22485.0, 22498.4, 22511.5, 22524.9, 22540.2, 22552.9, 22567.0, 22581.5, 22599.2, 22619.0, 22638.7, 22655.1, 22667.9, 22680.7, 22694.3, 22710.2, 22727.6, 22748.1, 22768.9, 22790.1, 22809.6, 22828.4, 22849.7, 22872.1, 22893.9, 22919.8, 22943.1, 22965.7, 22987.3, 23011.0, 23034.4, 23059.9, 23086.2, 23113.2, 23140.3, 23163.1, 23183.5, 23205.9, 23228.8, 23253.1, 23279.6, 23305.3, 23332.3, 23354.1, 23375.6, 23393.1, 23409.5, 23429.0, 23447.7, 23466.2, 23485.0, 23505.4, 23525.8, 23547.7, 23567.5, 23588.8, 23610.8, 23634.0, 23656.4, 23679.6, 23702.5, 23727.1, 23748.5, 23771.7, 23794.6, 23815.3, 23837.6, 23861.2, 23886.7, 23913.1, 23941.1, 23970.0, 24000.5, 24034.2, 24066.4, 24101.4, 24138.3, 24178.2, 24219.7, 24262.1, 24302.0, 24342.4, 24384.7, 24426.9, 24470.3, 24514.6, 24563.6, 24618.3, 24670.7, 24720.5, 24783.1, 24850.6, 24923.9, 24990.5, 25056.9, 25122.0, 25183.0, 25243.8, 25308.1, 25372.6, 25436.0, 25501.0, 25564.8, 25632.8, 25701.5, 25770.2, 25842.5, 25918.4, 25991.5, 26064.3, 26133.3, 26194.7, 26260.4, 26323.8, 26378.7, 26435.9, 26497.6, 26556.8, 26614.6, 26673.7, 26735.3, 26798.0, 26858.1, 26917.5, 26973.5, 27029.9, 27090.3, 27150.2, 27210.8, 27267.7, 27318.2, 27375.7, 27430.3, 27487.5, 27550.1, 27612.1, 27677.7, 27744.6, 27815.9, 27888.4, 27962.3, 28036.3, 28110.9, 28190.2, 28268.7, 28345.1, 28427.3, 28512.5, 28598.8, 28682.5, 28764.3, 28854.3, 28945.4, 29038.9, 29136.8, 29232.2, 29327.6, 29423.4, 29517.2, 29611.8, 29702.4, 29791.3, 29875.3, 29958.7, 30050.6, 30145.3, 30246.7, 30347.5, 30451.7, 30553.9, 30660.2, 30769.2, 30879.8, 30995.2, 31105.3, 31213.4, 31310.9, 31414.3, 31509.8, 31604.7, 31703.7, 31809.5, 31916.9, 32023.9, 32134.4, 32255.0, 32370.7, 32482.1, 32592.0, 32693.3, 32795.7, 32905.2, 33019.1, 33132.4, 33246.3, 33358.5, 33465.0, 33571.2, 33675.3, 33777.9, 33875.6, 33977.7, 34078.5, 34165.0, 34249.1, 34343.1, 34438.4, 34534.8, 34623.6, 34710.6, 34787.6, 34857.7, 34929.4, 35015.9, 35102.9, 35187.9, 35277.1, 35363.0, 35448.8, 35537.0, 35628.0, 35721.6, 35815.3, 35906.1, 35998.9, 36087.0, 36171.8, 36258.3, 36346.7, 36430.6, 36516.7, 36604.4, 36692.8, 36783.3, 36872.3, 36966.4, 37058.7, 37148.5, 37243.0, 37340.2, 37436.8, 37533.0, 37628.2, 37721.3], "z_scores": [0.08, 0.44, 0.63, 1.59, 1.33, 2.06, 2.58, 2.1, 2.53, 1.82, 2.45, 1.5, 2.34, 1.41, 2.19, 2.7, 2.06, 1.41, 0.28, 1.17, 1.47, 2.25, 2.67, 3.05, 2.15, 2.41, 1.29, 1.08, 2.06, 2.35, 1.31, 2.01, 1.8, 1.41, 1.12, 1.94, 1.52, 1.97, 1.67, 1.43, 1.5, 0.99, 0.29, 0.8, 0.28, 0.76, 0.5, 0.79, 0.58, -0.4, -0.06, -1.42, -1.32, 0.68, -1.77, -1.1, -0.13, 0.71, 0.66, 0.6, -0.19, 0.39, 0.78, 0.52, 0.87, 1.42, 0.76, 1.19, 0.01, 0.56, -0.41, -1.06, -0.8, -0.83, -0.18, 0.81, 0.82, 0.7, 1.0, 1.36, 0.8, 1.31, 1.9, 2.98, 3.01, 2.11, 1.73, 1.46, 1.8, 1.76, 1.88, 1.4, 2.18, 2.09, 1.93, 1.01, 1.73, 1.73, 1.63, 1.75, 2.05, 1.43, 0.83, 0.42, 1.22, 1.14, 0.48, 0.57, 1.29, 1.78, 1.99, 1.86, 2.55, 2.68, 2.28, 1.77, 0.96, -0.44, 0.92, 0.7, -0.92, 0.26, 1.6, 0.59, 0.38, 0.32, 0.85, 1.21, 0.24, 0.18, -0.75, -0.61, 0.58, 0.18, -0.18, -0.97, -1.83, 0.7, -0.67, 0.42, 2.28, 1.62, 1.97, 1.54, 2.27, 2.22, 2.21, 1.47, 1.52, 1.98, 1.88, 1.43, 2.4, 2.44, 1.92, 1.54, 1.13, 2.44, 1.95, 1.93, 2.17, 1.62, 1.62, 1.55, 1.09, 1.32, 0.85, 0.71, 0.27, 0.31, 1.24, 1.52, 2.01, 1.52, 1.73, 1.14, 1.66, 1.72, 1.58, 1.83, 1.23, 0.91, 0.12, 1.01, 0.07, 0.23, 0.86, 1.34, 1.28, 1.13, 1.34, 1.87, 1.2, 0.55, 0.8, -0.32, 0.3, 1.16, 1.67, 1.15, 1.06, 0.75, -0.29, 0.2, -0.22, -0.13, -0.81, 0.26, -0.0, -2.98, -2.23, -0.19, 0.01, -0.22, -1.42, -1.13, -2.77, -3.27, -2.57, 0.21, -0.19, -0.43, 0.43, -0.04, -0.24, 0.26, 0.21, 0.39, 0.61, 0.28, 0.29, -0.17, -0.52, -0.2, 0.01, -0.4, -0.01, 0.43, 0.34, 0.51, 0.21, 0.84, 0.02, -0.12, 0.53, 0.99, 0.58, 0.62, 0.38, -0.32], "fd_fast": [2.421, 2.4197, 2.4193, 2.4195, 2.4192, 2.4201, 2.4236, 2.4253, 2.4281, 2.4287, 2.4302, 2.4304, 2.4326, 2.4339, 2.4364, 2.4396, 2.4419, 2.4434, 2.4431, 2.4438, 2.4442, 2.4448, 2.4464, 2.4481, 2.4496, 2.4509, 2.4518, 2.4515, 2.4534, 2.455, 2.4547, 2.4559, 2.4575, 2.4598, 2.4609, 2.4627, 2.4633, 2.464, 2.4637, 2.464, 2.464, 2.4646, 2.4645, 2.4638, 2.462, 2.462, 2.4608, 2.4602, 2.4598, 2.4584, 2.4564, 2.4532, 2.4495, 2.4485, 2.4449, 2.4419, 2.4407, 2.4414, 2.4414, 2.442, 2.441, 2.441, 2.4411, 2.4411, 2.4427, 2.4444, 2.4472, 2.4503, 2.4499, 2.453, 2.4544, 2.4541, 2.4529, 2.4519, 2.4515, 2.4529, 2.4538, 2.4541, 2.4549, 2.4558, 2.4555, 2.4564, 2.4575, 2.461, 2.4643, 2.4676, 2.4711, 2.4741, 2.4777, 2.4806, 2.4829, 2.4845, 2.4875, 2.4902, 2.4925, 2.4939, 2.496, 2.4975, 2.4977, 2.4978, 2.4996, 2.5007, 2.501, 2.5, 2.5005, 2.5006, 2.5001, 2.4986, 2.4984, 2.4992, 2.502, 2.5033, 2.5059, 2.5092, 2.5114, 2.512, 2.512, 2.5104, 2.5121, 2.512, 2.509, 2.5094, 2.5122, 2.5119, 2.5102, 2.508, 2.507, 2.5053, 2.5013, 2.4979, 2.494, 2.4919, 2.4943, 2.4936, 2.4928, 2.4938, 2.4914, 2.49, 2.4885, 2.4889, 2.4921, 2.4933, 2.4945, 2.497, 2.5007, 2.5062, 2.5115, 2.5139, 2.517, 2.5215, 2.5271, 2.5333, 2.5379, 2.5448, 2.5493, 2.5504, 2.5516, 2.5552, 2.5585, 2.5606, 2.5635, 2.565, 2.5678, 2.5703, 2.5707, 2.5719, 2.5726, 2.571, 2.5679, 2.5658, 2.5668, 2.5693, 2.5703, 2.5711, 2.5724, 2.5714, 2.5731, 2.5751, 2.5769, 2.5806, 2.5819, 2.5835, 2.5832, 2.5864, 2.5869, 2.5855, 2.585, 2.5844, 2.5849, 2.5842, 2.5856, 2.5868, 2.586, 2.5839, 2.5814, 2.5783, 2.5773, 2.5802, 2.5815, 2.5844, 2.5868, 2.587, 2.5843, 2.5824, 2.5803, 2.5779, 2.5731, 2.5717, 2.5716, 2.5663, 2.5645, 2.5646, 2.5634, 2.5611, 2.5578, 2.5549, 2.5495, 2.5441, 2.5389, 2.5399, 2.5399, 2.5404, 2.5409, 2.5408, 2.5448, 2.5488, 2.5495, 2.5502, 2.5517, 2.5544, 2.5567, 2.5611, 2.5663, 2.5712, 2.5708, 2.5704, 2.5712, 2.5712, 2.5719, 2.5734, 2.5734, 2.5745, 2.5738, 2.5724, 2.5728, 2.5741, 2.5755, 2.5776, 2.5787, 2.5781], "fd_slow": [2.4108, 2.4113, 2.4117, 2.4124, 2.4132, 2.414, 2.4146, 2.4152, 2.4159, 2.4164, 2.4168, 2.417, 2.4176, 2.4182, 2.4189, 2.4196, 2.4202, 2.4209, 2.4213, 2.4221, 2.4226, 2.4233, 2.424, 2.4249, 2.4259, 2.4267, 2.4273, 2.4278, 2.4287, 2.4297, 2.4306, 2.4315, 2.4323, 2.433, 2.4338, 2.4347, 2.4353, 2.4362, 2.4368, 2.4375, 2.4384, 2.439, 2.4394, 2.4399, 2.4403, 2.4411, 2.4415, 2.4421, 2.4426, 2.443, 2.4433, 2.4434, 2.4432, 2.4435, 2.4433, 2.4432, 2.4433, 2.4437, 2.4441, 2.4444, 2.4447, 2.4455, 2.4461, 2.4467, 2.4472, 2.4478, 2.4481, 2.4488, 2.4493, 2.4499, 2.4504, 2.4507, 2.4509, 2.4511, 2.4514, 2.4517, 2.4519, 2.4522, 2.4525, 2.453, 2.4532, 2.4537, 2.4542, 2.4551, 2.4559, 2.4564, 2.4569, 2.4575, 2.4585, 2.4592, 2.46, 2.4605, 2.4611, 2.4615, 2.4622, 2.4624, 2.4632, 2.464, 2.4646, 2.4651, 2.466, 2.4665, 2.4668, 2.4671, 2.4677, 2.4681, 2.4684, 2.4685, 2.469, 2.4697, 2.4705, 2.4715, 2.4729, 2.4743, 2.4757, 2.4767, 2.4775, 2.4776, 2.4783, 2.4792, 2.4794, 2.4804, 2.4819, 2.4825, 2.4837, 2.4847, 2.4857, 2.4866, 2.4871, 2.4877, 2.4881, 2.4884, 2.489, 2.4896, 2.49, 2.49, 2.4899, 2.4904, 2.4908, 2.4914, 2.4928, 2.4941, 2.4955, 2.4968, 2.4982, 2.4995, 2.5007, 2.5018, 2.5029, 2.504, 2.5053, 2.5063, 2.5077, 2.5088, 2.5096, 2.5105, 2.5113, 2.5129, 2.5141, 2.5154, 2.5167, 2.518, 2.519, 2.52, 2.5208, 2.522, 2.5228, 2.5234, 2.5238, 2.5242, 2.5249, 2.5261, 2.5277, 2.5293, 2.5308, 2.5319, 2.5336, 2.5354, 2.5368, 2.5383, 2.5392, 2.54, 2.54, 2.5404, 2.5404, 2.5407, 2.5417, 2.5436, 2.5449, 2.5462, 2.5483, 2.5502, 2.5512, 2.5523, 2.5535, 2.5542, 2.555, 2.556, 2.5576, 2.5589, 2.5606, 2.5621, 2.5629, 2.5639, 2.565, 2.5663, 2.5677, 2.5687, 2.5701, 2.5701, 2.5698, 2.5703, 2.5708, 2.5713, 2.5711, 2.571, 2.5702, 2.5694, 2.5686, 2.5689, 2.5691, 2.5692, 2.5694, 2.5692, 2.5691, 2.5694, 2.5698, 2.5697, 2.5698, 2.5698, 2.5696, 2.5694, 2.569, 2.5688, 2.569, 2.5687, 2.569, 2.5694, 2.5701, 2.5708, 2.5708, 2.571, 2.5705, 2.5701, 2.5699, 2.5701, 2.5699, 2.5696, 2.5692, 2.5684]};
+
+        // Price Chart
         new Chart(document.getElementById('priceChart'), {
             type: 'line',
             data: {
@@ -387,8 +524,8 @@
                     {
                         label: '大盤收盤價',
                         data: chartData.closes,
-                        borderColor: '#06b6d4',
-                        backgroundColor: 'rgba(6, 182, 212, 0.05)',
+                        borderColor: '#0284c7',
+                        backgroundColor: 'rgba(2, 132, 199, 0.06)',
                         borderWidth: 2,
                         tension: 0.1,
                         fill: true,
@@ -397,7 +534,7 @@
                     {
                         label: '宏觀 200MA',
                         data: chartData.macro_200ma,
-                        borderColor: '#f59e0b',
+                        borderColor: '#d97706',
                         borderWidth: 1.5,
                         borderDash: [4, 4],
                         pointRadius: 0
@@ -407,15 +544,15 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } },
+                plugins: { legend: { labels: { color: '#475569', font: { size: 11, weight: 'bold' } } } },
                 scales: {
-                    x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280', maxTicksLimit: 8 } },
-                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280' } }
+                    x: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', maxTicksLimit: 8 } },
+                    y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } }
                 }
             }
         });
 
-        // 2. Z-Score Chart with Thresholds
+        // Z-Score Chart
         new Chart(document.getElementById('zChart'), {
             type: 'line',
             data: {
@@ -424,14 +561,14 @@
                     {
                         label: 'Z-Score',
                         data: chartData.z_scores,
-                        borderColor: '#a855f7',
+                        borderColor: '#7c3aed',
                         borderWidth: 2,
                         pointRadius: 0
                     },
                     {
                         label: '做多門檻 (-0.6)',
                         data: Array(chartData.dates.length).fill(-0.6),
-                        borderColor: '#06b6d4',
+                        borderColor: '#0284c7',
                         borderWidth: 1,
                         borderDash: [3, 3],
                         pointRadius: 0
@@ -439,7 +576,7 @@
                     {
                         label: '恐慌抄底 (-1.8)',
                         data: Array(chartData.dates.length).fill(-1.8),
-                        borderColor: '#f43f5e',
+                        borderColor: '#e11d48',
                         borderWidth: 1.5,
                         borderDash: [4, 4],
                         pointRadius: 0
@@ -447,7 +584,7 @@
                     {
                         label: '力竭超買 (+2.2)',
                         data: Array(chartData.dates.length).fill(2.2),
-                        borderColor: '#eab308',
+                        borderColor: '#d97706',
                         borderWidth: 1,
                         borderDash: [3, 3],
                         pointRadius: 0
@@ -457,15 +594,15 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#9ca3af', font: { size: 10 } } } },
+                plugins: { legend: { labels: { color: '#475569', font: { size: 10, weight: 'bold' } } } },
                 scales: {
-                    x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280', maxTicksLimit: 5 } },
-                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280' } }
+                    x: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', maxTicksLimit: 5 } },
+                    y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } }
                 }
             }
         });
 
-        // 3. Momentum Fast vs Slow Chart
+        // Momentum Fast vs Slow Chart
         new Chart(document.getElementById('momentumChart'), {
             type: 'line',
             data: {
@@ -474,14 +611,14 @@
                     {
                         label: 'FracDiff Fast MA (15)',
                         data: chartData.fd_fast,
-                        borderColor: '#10b981',
+                        borderColor: '#059669',
                         borderWidth: 1.5,
                         pointRadius: 0
                     },
                     {
                         label: 'FracDiff Slow MA (70)',
                         data: chartData.fd_slow,
-                        borderColor: '#ef4444',
+                        borderColor: '#dc2626',
                         borderWidth: 1.5,
                         pointRadius: 0
                     }
@@ -490,10 +627,10 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#9ca3af', font: { size: 11 } } } },
+                plugins: { legend: { labels: { color: '#475569', font: { size: 11, weight: 'bold' } } } },
                 scales: {
-                    x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280', maxTicksLimit: 8 } },
-                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280' } }
+                    x: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', maxTicksLimit: 8 } },
+                    y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } }
                 }
             }
         });
