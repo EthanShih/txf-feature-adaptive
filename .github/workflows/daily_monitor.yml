@@ -1,6 +1,8 @@
 name: Feature Adaptive Daily Monitor & GitHub Pages Deploy
 
 on:
+  push:
+    branches: [ main ]
   schedule:
     # 台灣時間週一至週五 14:30 (UTC 06:30)
     - cron: '30 6 * * 1-5'
@@ -45,7 +47,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No data changes to commit."
           else
-            git commit -m "Auto-update daily feature adaptive monitor data [$(date +'%Y-%m-%d')]"
+            git commit -m "Auto-update daily feature adaptive monitor data [$(date +'%Y-%m-%d')] [skip ci]"
             git push
           fi
 
