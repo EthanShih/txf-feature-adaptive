@@ -4,8 +4,10 @@ on:
   push:
     branches: [ main ]
   schedule:
-    # 台灣時間週一至週五 14:30 (UTC 06:30)
-    - cron: '30 6 * * 1-5'
+    # 台灣時間週一至週五 14:45, 16:30, 20:30 (UTC 06:45, 08:30, 12:30) 多重排程避免延遲與確保盤後資料完整
+    - cron: '45 6 * * 1-5'
+    - cron: '30 8 * * 1-5'
+    - cron: '30 12 * * 1-5'
   workflow_dispatch: # 支援在 GitHub Actions 頁面手動一鍵觸發
 
 permissions:
@@ -32,7 +34,7 @@ jobs:
 
       - name: Install Python Dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run Daily Monitor Pipeline
@@ -52,13 +54,16 @@ jobs:
           fi
 
       - name: Setup GitHub Pages
+        continue-on-error: true
         uses: actions/configure-pages@v4
 
       - name: Upload Artifact
+        continue-on-error: true
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'docs/'
 
       - name: Deploy to GitHub Pages
+        continue-on-error: true
         id: deployment
         uses: actions/deploy-pages@v4

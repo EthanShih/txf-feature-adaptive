@@ -9,6 +9,9 @@ Main Entry Point: Daily pipeline
 import os
 import sys
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 # Ensure src is in python path
 SRC_DIR = os.path.join(os.path.dirname(__file__), 'src')
 if SRC_DIR not in sys.path:
